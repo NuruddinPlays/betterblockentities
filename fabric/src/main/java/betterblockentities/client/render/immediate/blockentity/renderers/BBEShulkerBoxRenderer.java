@@ -112,7 +112,8 @@ public class BBEShulkerBoxRenderer implements BlockEntityRenderer<ShulkerBoxBloc
 
         BlockEntityRenderStateExt stateExt = (BlockEntityRenderStateExt)state;
 
-        boolean managed = OverlayRenderer.manageCrumblingOverlay(stateExt.blockEntity(), submitNodeCollector, poseStack, model, progress, state.lightCoords, OverlayTexture.NO_OVERLAY, -1, state.breakProgress);
+        OverlayRenderer.DrawStage drawStage = OverlayRenderer.DrawStage.BEFORE_TERRAIN_TRANSLUCENT;
+        boolean managed = OverlayRenderer.manageCrumblingOverlay(stateExt.blockEntity(), submitNodeCollector, poseStack, model, progress, state.lightCoords, state.breakProgress, drawStage);
         if (!managed) {
             submitNodeCollector.submitModel(this.model, progress, poseStack, lightCoords, overlayCoords, -1, sprite, this.sprites, outlineColor, breakProgress);
         }

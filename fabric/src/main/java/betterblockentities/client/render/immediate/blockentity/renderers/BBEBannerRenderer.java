@@ -148,7 +148,8 @@ public class BBEBannerRenderer implements BlockEntityRenderer<BannerBlockEntity,
 
         BlockEntityRenderStateExt stateExt = (BlockEntityRenderStateExt)state;
 
-        boolean managed = OverlayRenderer.manageCrumblingOverlay(stateExt.blockEntity(), collector, poseStack, model, Unit.INSTANCE, lightCoords, overlayCoords, outlineColor, breakProgress);
+        OverlayRenderer.DrawStage baseDrawStage = OverlayRenderer.DrawStage.BEFORE_TERRAIN_TRANSLUCENT;
+        boolean managed = OverlayRenderer.manageCrumblingOverlay(stateExt.blockEntity(), collector, poseStack, model, Unit.INSTANCE, lightCoords, breakProgress, baseDrawStage);
         if (!managed) {
             collector.submitModel(model, Unit.INSTANCE, poseStack, lightCoords, overlayCoords, -1, sprite, sprites, outlineColor, breakProgress);
         }
@@ -158,7 +159,8 @@ public class BBEBannerRenderer implements BlockEntityRenderer<BannerBlockEntity,
         float rotClamped = Math.clamp(rot, -4.05f, -0.45f);
         flagModel.root().getChild("flag").xRot = (float)Math.toRadians(rotClamped);
 
-        boolean managed2 = OverlayRenderer.manageCrumblingOverlay(stateExt.blockEntity(), collector, poseStack, flagModel, staticCrumblingOverlayPhase(), lightCoords, overlayCoords, outlineColor, breakProgress);
+        OverlayRenderer.DrawStage flagDrawStage = OverlayRenderer.DrawStage.AFTER_TERRAIN_TRANSLUCENT;
+        boolean managed2 = OverlayRenderer.manageCrumblingOverlay(stateExt.blockEntity(), collector, poseStack, flagModel, staticCrumblingOverlayPhase(), lightCoords, breakProgress, flagDrawStage);
         if (!managed2) {
             collector.submitModel(flagModel, phase, poseStack, lightCoords, overlayCoords, -1, sprite, sprites, outlineColor, breakProgress);
         }

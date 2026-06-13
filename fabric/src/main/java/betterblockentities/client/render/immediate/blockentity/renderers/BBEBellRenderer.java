@@ -53,7 +53,8 @@ public class BBEBellRenderer implements BlockEntityRenderer<BellBlockEntity, Bel
 
         BlockEntityRenderStateExt stateExt = (BlockEntityRenderStateExt)state;
 
-        boolean managed = OverlayRenderer.manageCrumblingOverlay(stateExt.blockEntity(), submitNodeCollector, poseStack, model, modelState, state.lightCoords, OverlayTexture.NO_OVERLAY, -1, state.breakProgress);
+        OverlayRenderer.DrawStage drawStage = OverlayRenderer.DrawStage.BEFORE_TERRAIN_TRANSLUCENT;
+        boolean managed = OverlayRenderer.manageCrumblingOverlay(stateExt.blockEntity(), submitNodeCollector, poseStack, model, modelState, state.lightCoords, state.breakProgress, drawStage);
         if (!managed) {
             submitNodeCollector.submitModel(
                     this.model, modelState, poseStack, state.lightCoords, OverlayTexture.NO_OVERLAY, -1, BELL_TEXTURE, this.sprites, 0, state.breakProgress

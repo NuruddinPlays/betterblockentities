@@ -101,7 +101,9 @@ public class BBEChestRenderer<T extends BlockEntity & LidBlockEntity> implements
         BlockEntityRenderStateExt stateExt = (BlockEntityRenderStateExt)state;
 
         ChestModel model = this.models.select(state.type);
-        boolean managed = OverlayRenderer.manageCrumblingOverlay(stateExt.blockEntity(), submitNodeCollector, poseStack, model, open, state.lightCoords, OverlayTexture.NO_OVERLAY, -1, state.breakProgress);
+
+        OverlayRenderer.DrawStage drawStage = OverlayRenderer.DrawStage.BEFORE_TERRAIN_TRANSLUCENT;
+        boolean managed = OverlayRenderer.manageCrumblingOverlay(stateExt.blockEntity(), submitNodeCollector, poseStack, model, open, state.lightCoords, state.breakProgress, drawStage);
         if (!managed) {
             model = this.bbeModels.select(state.type);
             submitNodeCollector.submitModel(model, open, poseStack, state.lightCoords, OverlayTexture.NO_OVERLAY, -1, spriteId, this.sprites, 0, state.breakProgress);
