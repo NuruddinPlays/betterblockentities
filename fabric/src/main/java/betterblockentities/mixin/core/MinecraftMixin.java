@@ -6,8 +6,12 @@ import betterblockentities.client.BBE;
 import betterblockentities.client.tasks.ManagerTasks;
 
 /* minecraft */
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.main.GameConfig;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.PlayerSkinRenderCache;
 import net.minecraft.client.renderer.block.BlockModelResolver;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -57,12 +61,16 @@ public abstract class MinecraftMixin {
         this.resourceManager.registerReloadListener(BBE.GlobalScope.altRenderDispatcher);
     }
 
-    @Inject(method = "tick", at = @At("TAIL"))
-    private void pollManagerQueue(CallbackInfo ci) {
-        Minecraft mc = (Minecraft) (Object) this;
-        Level level = mc.level;
-        if (level == null || !level.isClientSide()) return;
+    @WrapOperation(method = "renderFrame",
+            at = @At(
+                    value = "INVOKE",
+                    target = "net/minecraft/client/renderer/GameRenderer.extract(Lnet/minecraft/client/DeltaTracker;Z)V"
+            )
+    )
+    private void pollManagerQueue(GameRenderer instance, DeltaTracker deltaTracker, boolean advanceGameTime, Operation<Void> original) {
+        float partialTicks = deltaTracker.getGameTimeDeltaPartialTick(false);
+        ManagerTasks.process(partialTicks);
 
-        ManagerTasks.process();
+        original.call(instance, deltaTracker, advanceGameTime);
     }
 }

@@ -16,6 +16,8 @@ import betterblockentities.client.tasks.ManagerTasks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.*;
 
+import java.util.Optional;
+
 public final class InstancedBlockEntityManager {
     private enum Phase {
         IDLE,               //manager is inactive. nothing scheduled or required
@@ -110,7 +112,7 @@ public final class InstancedBlockEntityManager {
      *   PROCESSING -> keep scheduled
      *   FINISHED   -> safe to remove from queue
      */
-    public int run() {
+    public int run(float partialTicks) {
         if (!BBEConfig.OptEnabledTable.ENABLED[ext.optKind() & 0xFF] ||
             AltRenderers.hasRendererOverride(blockEntity.getType()))
         {
@@ -120,7 +122,7 @@ public final class InstancedBlockEntityManager {
 
         switch (phase) {
             case IDLE -> {
-                if (shouldBeImmediate()) {
+                if (shouldBeImmediate(partialTicks)) {
                     enterImmediate();
                     return ManagerTasks.PROCESSING;
                 }
@@ -129,10 +131,10 @@ public final class InstancedBlockEntityManager {
 
             case IMMEDIATE_ACTIVE -> {
                 /* stay in IMMEDIATE while conditions remain true */
-                if (shouldBeImmediate()) {
+                if (shouldBeImmediate(partialTicks)) {
                     return ManagerTasks.PROCESSING;
                 }
-                requestTerrainFence();
+                requestTerrainFence(partialTicks);
                 return ManagerTasks.PROCESSING;
             }
 
@@ -178,9 +180,9 @@ public final class InstancedBlockEntityManager {
     /**
      * Determines whether the BE must remain in IMMEDIATE mode.
      */
-    private boolean shouldBeImmediate() {
+    private boolean shouldBeImmediate(float partialTicks) {
         if (animating) return true;
-        if (durationTask && isDurationStillRunning()) return true;
+        if (durationTask && isDurationStillRunning(partialTicks)) return true;
         if (isSmartSchedulerEnabled() && isVisibleInFov()) return true;
         return false;
     }
@@ -188,10 +190,14 @@ public final class InstancedBlockEntityManager {
     /**
      * Checks duration task expiration
      */
-    private boolean isDurationStillRunning() {
+    private boolean isDurationStillRunning(float partialTicks) {
         if (blockEntity.getLevel() == null) return false;
         float now = blockEntity.getLevel().getGameTime();
-        return (now - durationTaskStart) <= duration;
+
+        float duration = ((now - durationTaskStart) + partialTicks) / this.duration;
+
+        //return ((now - durationTaskStart) + partialTicks) <= duration;
+        return duration >= 0.0F && duration <= 1.0F;
     }
 
     /**
@@ -210,7 +216,7 @@ public final class InstancedBlockEntityManager {
     /**
      * Requests chunk rebuild and waits for upload fence before allowing BER cancellation.
      */
-    private void requestTerrainFence() {
+    private void requestTerrainFence(float partialTicks) {
         phase = Phase.WAITING_TERRAIN;
 
         if (ext.renderingMode() != RenderingMode.TERRAIN) {
@@ -228,7 +234,7 @@ public final class InstancedBlockEntityManager {
             }
 
             /* animation resumed during rebuild */
-            if (shouldBeImmediate()) {
+            if (shouldBeImmediate(partialTicks)) {
                 enterImmediate();
                 ManagerTasks.schedule(this);
                 return;

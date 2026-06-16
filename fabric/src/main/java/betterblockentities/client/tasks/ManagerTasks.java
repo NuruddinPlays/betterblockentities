@@ -23,7 +23,7 @@ public final class ManagerTasks {
         }
     }
 
-    public static void process() {
+    public static void process(float partialTicks) {
         int budget = 256;
         while (budget-- > 0) {
             InstancedBlockEntityManager mgr = WORK_QUEUE.poll();
@@ -31,7 +31,7 @@ public final class ManagerTasks {
 
             mgr.clearQueued();
 
-            int state = mgr.run();
+            int state = mgr.run(partialTicks);
             if (state == PROCESSING) {
                 if (mgr.isValid()) {
                     schedule(mgr);
