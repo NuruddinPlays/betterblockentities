@@ -41,7 +41,7 @@
   "bbe.config.storage.main.misc.sign_text_culling": "Penyorokan Teks Papan Tanda",
   "bbe.config.storage.main.misc.sign_text_culling.tooltip": "Melangkau pemaparan teks papan tanda pada sisi yang tidak kelihatan. Digunakan untuk menogol BUKA atau TUTUP penyorokan sisi belakang teks papan tanda",
   "bbe.config.storage.main.misc.update_scheduler": "Penjadual Kemas Kini",
-  "bbe.config.storage.main.misc.update_scheduler.tooltip": "Menentukan penjadual kemas kini yang akan digunakan. Pintar mengemas kini entiti blok berdasarkan beberapa faktor seperti keterlihatan (tanpa kemas kini langsung), manakala Pantas mengemas kini serta-merta",
+  "bbe.config.storage.main.misc.update_scheduler.tooltip": "Menentukan penjadual kemas kini yang akan digunakan. Pintar mengemas kini entiti blok berdasarkan beberapa faktor seperti keterlihatan (tanpa kemas kini secara langsung), manakala Pantas mengemas kini serta-merta",
   "bbe.config.storage.main.misc.update_scheduler.tooltip_notavailable": "Tetapan ini tidak tersedia kerana sebuah mod yang tidak serasi telah dikesan!",
   "bbe.config.storage.main.misc.update_scheduler.type.fast": "Pantas",
   "bbe.config.storage.main.misc.update_scheduler.type.smart": "Pintar",
